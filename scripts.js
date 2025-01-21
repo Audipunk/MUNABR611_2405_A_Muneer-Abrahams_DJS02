@@ -3,32 +3,43 @@ const result = document.querySelector("[data-result]");
 
 form.addEventListener("submit", (event) => {
   event.preventDefault();
+  
   const entries = new FormData(event.target);
   const { dividend, divider } = Object.fromEntries(entries);
-  if (isEmpty(dividend) || isEmpty(divider)) {
-    result.innerText = "Division not performed. Both values are required in inputs. Try again";
-  } else if (dividend === "YOLO" && divider === "+++") {
-    document.write("Something critical went wrong. Please reload the page")
-    console.trace();
-  } else if (!isNumeric(dividend) || !isNumeric(divider)) {
-    result.innerText = "Please input valid whole numbers";
-  } else if (dividend === "0" || divider === "0") {
-    result.innerText = ""
-    console.trace();
-    result.innerText = "Division not performed. Invalid number provided. Try again";
-  } else {
-    result.innerText = Math.floor(dividend / divider);
+
+  // Convert to numbers
+  const dividendNum = Number(dividend);
+  const dividerNum = Number(divider);
+
+  // Scenario 1: Validation when values are missing
+  if (!dividend || !divider) {
+    result.innerText = "Division not performed. Both values are required in inputs. Try again.";
+    return;
+  }
+
+  // Scenario 2: Validate if the inputs are not numbers
+  if (isNaN(dividendNum) || isNaN(dividerNum)) {
+    console.error("Error: Non-numeric input provided.");
+    document.body.innerHTML = "<h1>Something critical went wrong. Please reload the page</h1>";
+    throw new Error("Non-numeric input caused the crash.");
+  }
+
+  // Scenario 3: Invalid division by zero
+  if (dividerNum === 0) {
+    result.innerText = "Division not performed. Invalid number provided. Try again.";
+    console.error("Error: Division by zero is invalid.");
+    return;
+  }
+
+  // Perform the division
+  const divisionResult = dividendNum / dividerNum;
+
+  // Scenario 4: Display whole number result when possible
+  if (Number.isInteger(divisionResult)) {
+    result.innerText = divisionResult;
+  } 
+  // Scenario 5: Display the result rounded down if it's a decimal
+  else {
+    result.innerText = Math.floor(divisionResult);
   }
 });
-
-function isNumeric(num) {
-  return (
-    (typeof num === "number" ||
-      (typeof num === "string" && num.trim() !== "")) &&
-    !isNaN(num)
-  );
-}
-
-function isEmpty(num) {
-  return num === "";
-}
