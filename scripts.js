@@ -5,33 +5,28 @@ form.addEventListener("submit", (event) => {
   event.preventDefault();
   const entries = new FormData(event.target);
   const { dividend, divider } = Object.fromEntries(entries);
-
-  try {
-    // Check if inputs are valid numbers
-    if (isNaN(dividend) || isNaN(divider)) {
-      throw new Error("Non-numeric input detected");
-    }
-
+  //added Math floor method this returns only the integer
+  result.innerText = Math.floor(dividend / divider);
+  
+  try{
     if (!dividend || !divider) {
-      result.innerText =
-        "Division not performed. Both values are required in inputs. Try again.";
-    } else if (divider == 0) {
-      result.innerText =
-        "Division not performed. Invalid number provided. Try again.";
-      console.error("Division by zero error. Invalid number provided."); // Log error with call stack
-    } else {
-      result.innerText = Math.trunc(dividend / divider);
+      result.innerText = "Division not performed. Both values are required in inputs. Try again.";
+      return;
     }
-  } catch (error) {
-    const errorDiv = document.createElement("div");
-    errorDiv.classList.add("critical-error");
-    errorDiv.innerHTML = "<h1>Something critical went wrong. Please reload the page</h1>";
 
-    // Append the errorDiv to the body
-    document.body.innerHTML = ""; // Clear the current content
-    document.body.appendChild(errorDiv);
+    if (divider == 0) {
+      result.innerText = "Division not performed. Invalid number provided. Try again.";
+      console.error("Error: Division by zero attempted. Call stack:", new Error().stack);
+      return;
+    }
 
-    // Log the error with the call stack
-    console.error(error.stack);
-  }
+    if (isNaN(dividend) || isNaN(divider)) {
+     throw new Error("Non-numeric input provided. Critical failure.");
+    }
+
+} catch (error) {
+  // This displays critical error message and log error with call stack
+  document.body.innerHTML = "<h1>Something critical went wrong. Please reload the page.</h1>";
+  console.error("Critical Error:", error.stack);
+}
 });
