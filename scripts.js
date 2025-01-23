@@ -21,10 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
     console.log({ dividend, divider, dividendNum, dividerNum }); 
 
     // Helper function to display error messages
-    const displayError = (message) => {
-      result.innerText = message;
-      console.error(message);
-    };
+    const displayError = (message) => result.innerText = message;
 
     // Scenario: Validate if inputs are empty
     if (!dividend || !divider) {
